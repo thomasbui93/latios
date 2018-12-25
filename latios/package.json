@@ -7,7 +7,7 @@
     "prestart": "npm install && npm run build",
     "start": "nodemon src/index.ts",
     "build": "tsc",
-    "production": "node dist/index.js",
+    "production": "npm run prestart && node dist/index.js",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "test": "jest --forceExit --coverage --verbose"
   },
