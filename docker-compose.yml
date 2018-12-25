@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  nginx:
+    container_name: latios_nginx
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+  latios:
+    container_name: latios
+    build:
+      context: ./latios
+    volumes:
+      - ./latios:/usr/src
+      - /usr/src/node_modules
+    depends_on:
+      - redis
+      - database
+  redis:
+    container_name: latios_redis
+    image: bitnami/redis:latest
+    ports:
+      - '6379:6379'
+    restart: always
+  database:
+    container_name: latios_database
+    image: bitnami/mongodb:latest
+    restart: always
+    ports:
+      - 27017:27017

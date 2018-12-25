@@ -1,0 +1,1 @@
+export const booleanReducer = (accumulator: boolean, currentValue: boolean) => accumulator && currentValue

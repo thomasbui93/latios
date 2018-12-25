@@ -1,0 +1,42 @@
+{
+  "name": "latios",
+  "version": "0.0.1",
+  "description": "Latios backend service",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install && npm run build",
+    "start": "nodemon src/index.ts",
+    "build": "tsc",
+    "production": "node dist/index.js",
+    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "test": "jest --forceExit --coverage --verbose"
+  },
+  "author": "Khoa Bui <buidangkhoa2602@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/cors": "^2.8.4",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "inversify": "^4.13.0",
+    "inversify-binding-decorators": "^4.0.0",
+    "inversify-express-utils": "^6.1.0",
+    "mongoose": "^5.1.6",
+    "redis": "^2.8.0",
+    "reflect-metadata": "^0.1.12"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/express": "^4.16.0",
+    "@types/jest": "^23.1.1",
+    "@types/mongodb": "^3.0.21",
+    "@types/mongoose": "^5.0.17",
+    "@types/redis": "^2.8.6",
+    "jest": "^23.1.0",
+    "nodemon": "^1.17.5",
+    "ts-jest": "^22.4.6",
+    "ts-node": "^6.1.1",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.2"
+  }
+}
