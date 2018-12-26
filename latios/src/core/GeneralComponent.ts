@@ -1,4 +1,5 @@
 import { InterfaceComponent } from './InterfaceComponent'
+import { Express } from 'express'
 
 export class GeneralComponent implements InterfaceComponent {
     private name: string
@@ -22,4 +23,6 @@ export class GeneralComponent implements InterfaceComponent {
     public boot(): void {
         this.registerControllers()
     }
+
+    public applyMiddewares(app: Express): void {}
 }

@@ -13,9 +13,9 @@ export class ApplicationBoot {
     private components: InterfaceComponent[]
 
     constructor() {
-        this.registerComponents()
         const container = new Container()
         this.registerServices(container)
+        this.registerComponents()
         this.server = new InversifyExpressServer(container)
     }
 
@@ -30,12 +30,14 @@ export class ApplicationBoot {
     }
 
     public setup(): void {
-        this.components.forEach((component) => component.boot())
+        const components = this.components
+        components.forEach((component) => component.boot())
         this.server.setConfig((app: Express) => {
             app.use(bodyParser.urlencoded({
                 extended: true
             }))
             app.use(bodyParser.json())
+            components.forEach((component) => component.applyMiddewares(app))
         })
 
         this.server.build().listen(this.getPort())
