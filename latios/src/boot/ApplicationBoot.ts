@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import { Express } from 'express'
 import * as bodyParser from 'body-parser'
+import cors from 'cors'
 import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import { InterfaceComponent } from '../core/InterfaceComponent'
@@ -37,6 +38,7 @@ export class ApplicationBoot {
                 extended: true
             }))
             app.use(bodyParser.json())
+            app.use(cors())
             components.forEach((component) => component.applyMiddewares(app))
         })
 

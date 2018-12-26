@@ -4,7 +4,7 @@ import { randomBytes } from 'crypto'
 import { compare } from 'bcrypt'
 import { InterfaceUser, UserModel, InterfaceUserModel } from '../model/User'
 import { Redis } from '../../../datasource'
-import { tokenPair } from '../../../utils/const/redis'
+import { tokenPair, blackedListTokens } from '../../../utils/const/redis'
 
 interface Token {
     token: string,
@@ -15,6 +15,10 @@ interface Token {
 export class AuthService {
     private redisClient = Redis.getInstance()
 
+    /**
+     * create user
+     * @param userData
+     */
     async register(userData: InterfaceUser): Promise<InterfaceUserModel> {
         try {
             const user = await UserModel.create(userData)
@@ -24,6 +28,11 @@ export class AuthService {
         }
     }
 
+    /**
+     * Login to retrive tokens
+     * @param email string
+     * @param password string
+     */
     async login(email: string, password: string): Promise<Token> {
         try {
             const user = await this.authenticate(email, password)
@@ -44,6 +53,11 @@ export class AuthService {
         }
     }
 
+    /**
+     * Authenticate email and password
+     * @param email string
+     * @param password string
+     */
     async authenticate(email: string, password: string): Promise<InterfaceUserModel> {
         try {
             const user = await UserModel.findOne({email: email})
@@ -63,6 +77,11 @@ export class AuthService {
         }
     }
 
+    /**
+     * compare hashed password
+     * @param password string
+     * @param hashedPassword string
+     */
     async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
         try {
             const isTheSame = await compare(password, hashedPassword)
@@ -73,6 +92,10 @@ export class AuthService {
         }
     }
 
+    /**
+     * generate token based on user data
+     * @param user Partial<InterfaceUser>
+     */
     public getToken(user: Partial<InterfaceUser>): Promise<string> {
         return new Promise((resolve, reject) => {
             sign({
@@ -88,7 +111,10 @@ export class AuthService {
         })
     }
 
-    async getRefreshToken() {
+    /**
+     * generate refreshed token
+     */
+    async getRefreshToken(): Promise<string> {
         try {
             const buffer = await randomBytes(48)
             return buffer.toString('hex')
@@ -97,11 +123,15 @@ export class AuthService {
         }
     }
 
+    /**
+     * register pair token and refresh token
+     * @param token string
+     * @param refreshToken string
+     */
     async registerTokenPair(token: string, refreshToken: string) {
         const redisClient = this.redisClient
         return new Promise((resolve, reject) => {
             redisClient.hset(tokenPair, refreshToken, token, (err, status) => {
-                console.log(err, status)
                 if (err) {
                     reject(err)
                 }
@@ -110,6 +140,11 @@ export class AuthService {
         })
     }
 
+    /**
+     * Refresh token
+     * @param token string
+     * @param refreshToken string
+     */
     async refreshToken(token: string, refreshToken: string) {
         const isVerified = await this.isVerifiedRefreshToken(token, refreshToken)
         if (!isVerified) {
@@ -146,6 +181,22 @@ export class AuthService {
                     reject(err)
                 }
                 resolve(token)
+            })
+        })
+    }
+
+    async addTokenToBlackedList(token: string) {
+        const redisClient = this.redisClient
+        return new Promise((resolve, reject) => {
+            redisClient.sadd(blackedListTokens, token, (err, isDone) => {
+                if (err) {
+                    reject(err)
+                }
+                if (isDone >= 1) {
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
             })
         })
     }

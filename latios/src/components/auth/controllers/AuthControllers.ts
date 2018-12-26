@@ -53,7 +53,7 @@ export class AuthController {
     }
 
     /**
-     * Authenticate user
+     * refresh token
      * @param request Request
      * @param response Response
      */
@@ -63,7 +63,26 @@ export class AuthController {
             const token = await this.authService.refreshToken(request.body.token, request.body.refreshToken)
             response.json(token)
         } catch ( exception ) {
-            console.log(exception)
+            return response.json({
+                error: true,
+                message: 'Failed to refresh token'
+            })
+        }
+    }
+
+    /**
+     * refresh token
+     * @param request Request
+     * @param response Response
+     */
+    @httpPost('/logout')
+    private async logout(request: Request, response: Response) {
+        try {
+            await this.authService.addTokenToBlackedList(request.body.token)
+            response.json({
+                message: 'Logout successfully'
+            })
+        } catch ( exception ) {
             return response.json({
                 error: true,
                 message: 'Failed to refresh token'
