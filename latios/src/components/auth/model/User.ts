@@ -24,6 +24,8 @@ const UserSchema: Schema = new Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
+        index: true
     },
     password: {
         type: String,
@@ -45,7 +47,6 @@ UserSchema.pre<InterfaceUserModel>('save',  async function(next: any) {
     next()
 })
 
-UserSchema.index({'email': 1})
 UserSchema.set('toJSON', {
     transform(document: Document, ret: any, options: any) {
         delete ret['password']

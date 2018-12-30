@@ -32,4 +32,4 @@ services:
     image: bitnami/mongodb:latest
     restart: always
     ports:
-      - 27017:27017
+      - '27017:27017'

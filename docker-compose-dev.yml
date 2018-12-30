@@ -9,9 +9,13 @@ services:
     env_file:
       - ./docker/.env.dist
   redis:
+    logging:
+      driver: none
     environment: 
       REDIS_PASSWORD: core
   database:
+    logging:
+      driver: none
     environment:
       MONGODB_DATABASE: latios
       MONGODB_PASSWORD: core

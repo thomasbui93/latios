@@ -24,10 +24,9 @@ export class AuthController {
                 user
             })
         } catch ( exception ) {
-            console.log(exception)
             return response.json({
                 error: true,
-                message: 'Error has occured!'
+                message: 'Error has occured!',
             })
         }
     }
@@ -47,7 +46,7 @@ export class AuthController {
         } catch ( exception ) {
             return response.json({
                 error: true,
-                message: 'Failed to authenticate user'
+                message: 'Failed to authenticate user',
             })
         }
     }
@@ -80,12 +79,13 @@ export class AuthController {
         try {
             await this.authService.addTokenToBlackedList(request.body.token)
             response.json({
+                error: false,
                 message: 'Logout successfully'
             })
         } catch ( exception ) {
             return response.json({
                 error: true,
-                message: 'Failed to refresh token'
+                message: 'Failed to logout'
             })
         }
     }

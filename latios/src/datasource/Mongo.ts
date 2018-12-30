@@ -16,7 +16,7 @@ export class Mongo {
     private static getClient(): Promise<Mongoose> {
         const connectionURL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`
         try {
-            return connect(connectionURL, { server: { auto_reconnect: true } })
+            return connect(connectionURL, { autoReconnect: true, useNewUrlParser: true})
         } catch (exception) {
             console.log(exception)
             throw new Error('Error while connecting mongo')

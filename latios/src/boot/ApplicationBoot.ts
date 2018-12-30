@@ -2,12 +2,14 @@ import 'reflect-metadata'
 import { Express } from 'express'
 import * as bodyParser from 'body-parser'
 import cors from 'cors'
+import compression from 'compression'
 import { Container } from 'inversify'
 import { InversifyExpressServer } from 'inversify-express-utils'
 import { InterfaceComponent } from '../core/InterfaceComponent'
 import { booleanReducer } from '../utils/array/booleanReducer'
 import components from '../components'
 import { register } from '../utils/ioc'
+import { errorHanlder } from '../core/middlewares/error'
 
 export class ApplicationBoot {
     private server: InversifyExpressServer
@@ -39,6 +41,10 @@ export class ApplicationBoot {
             }))
             app.use(bodyParser.json())
             app.use(cors())
+            app.use(compression({
+                level: 9
+            }))
+            app.use(errorHanlder)
             components.forEach((component) => component.applyMiddewares(app))
         })
 
