@@ -22,6 +22,7 @@ const SphinxDocumentSchema: Schema = new Schema({
     question: {
         type: String,
         required: true,
+        unique: true
     },
     answer: {
         type: String,
@@ -38,14 +39,14 @@ const SphinxDocumentSchema: Schema = new Schema({
         enum: [SphinxLevel.BEGINNER, SphinxLevel.INTERMEDIATE, SphinxLevel.ADVANCED]
     },
     categories: {
-        type: [String],
-        default: [],
+        type: String,
+        default: 'Misc',
     },
     createdAt: Date,
     updatedAt: Date
 })
 
-SphinxDocumentSchema.pre<InterfaceSphinxDocumentModel>('save',  async function(next: any) {
+SphinxDocumentSchema.pre<InterfaceSphinxDocumentModel>('save', function(next: any) {
     const now = new Date()
     if (!this.createdAt) {
       this.createdAt = now
