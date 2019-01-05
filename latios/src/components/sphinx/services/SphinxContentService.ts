@@ -22,13 +22,7 @@ export class SphinxContentService {
     private cacheService = new RedisCacheService()
     private cacheNameSpace: string = 'spinx'
 
-    public prepareSearchField(query: {[key: string]: string}) {
-        const sort = {} as InterfaceSort
-        if (query.sortBy) {
-            sort[query.sortBy] = query.sortType === 'ASC' ? EnumSort.ASC : EnumSort.ASC
-        } else {
-            sort['createdAt'] = EnumSort.ASC
-        }
+    public prepareSearchField(query: { [key: string]: string }) {
 
         const pagination = {
             limit: query.limit ? parseInt(query.limit) : defaultPagination.limit,
@@ -38,10 +32,18 @@ export class SphinxContentService {
 
         if (query.text) {
             queries.$text = {
-                $search : query.text,
-                $language: 'en',
+                $search: query.text,
+                $language: 'none',
             }
         }
+        const sort = {} as InterfaceSort
+
+        if (query.sortBy) {
+            sort[query.sortBy] = query.sortType === 'ASC' ? EnumSort.ASC : EnumSort.ASC
+        } else {
+            sort['textScore'] = EnumSort.ASC
+        }
+
         try {
             if (typeof query.date === 'string') {
                 const dates = query.date.split('_')
@@ -63,12 +65,12 @@ export class SphinxContentService {
         }
     }
 
-    searchDocuments(query: {[key: string]: string}) {
-        const {queries, sort, pagination} = this.prepareSearchField(query)
+    searchDocuments(query: { [key: string]: string }) {
+        const { queries, sort, pagination } = this.prepareSearchField(query)
         return this.performanceSearch(queries, sort, pagination)
     }
 
-    async performanceSearch(queries: InterfaceQueryParam = {}, sort: InterfaceSort = {}, pagination: InterfacePagination = defaultPagination ) {
+    async performanceSearch(queries: InterfaceQueryParam = {}, sort: InterfaceSort = {}, pagination: InterfacePagination = defaultPagination) {
         try {
             const cacheKey = JSON.stringify({
                 queries,
@@ -80,8 +82,7 @@ export class SphinxContentService {
                 return JSON.parse(cached)
             }
 
-            const documents = await this.sphinxDocument
-                .find(queries)
+            const documents = await this.getExecution(queries)
                 .limit(pagination.limit)
                 .skip(getSkip(pagination))
                 .sort(sort)
@@ -91,6 +92,20 @@ export class SphinxContentService {
             return documents
         } catch (error) {
             throw Error(`Error while searching for documents, ${error.stack}`)
+        }
+    }
+
+    public getExecution(queries: InterfaceQueryParam) {
+        if (queries.$text) {
+            return this.sphinxDocument
+                .find(queries, {
+                    score: {
+                        $meta: 'textScore'
+                    }
+                })
+        } else {
+            return this.sphinxDocument
+                .find(queries)
         }
     }
 

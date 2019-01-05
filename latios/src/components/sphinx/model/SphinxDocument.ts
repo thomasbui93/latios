@@ -16,19 +16,17 @@ export interface InterfaceSphinxDocument {
     updatedAt: Date
 }
 
-export interface InterfaceSphinxDocumentModel extends InterfaceSphinxDocument, Document {}
+export interface InterfaceSphinxDocumentModel extends InterfaceSphinxDocument, Document { }
 
 const SphinxDocumentSchema: Schema = new Schema({
     question: {
         type: String,
         required: true,
         unique: true,
-        text: true,
     },
     answer: {
         type: String,
-        required: true,
-        text: true,
+        required: true
     },
     keywords: {
         type: [String],
@@ -48,13 +46,18 @@ const SphinxDocumentSchema: Schema = new Schema({
     updatedAt: Date
 })
 
-SphinxDocumentSchema.pre<InterfaceSphinxDocumentModel>('save', function(next: any) {
+SphinxDocumentSchema.pre<InterfaceSphinxDocumentModel>('save', function (next: any) {
     const now = new Date()
     if (!this.createdAt) {
-      this.createdAt = now
+        this.createdAt = now
     }
     this.updatedAt = now
     next()
+})
+
+SphinxDocumentSchema.index({
+    answer: 'text',
+    question: 'text'
 })
 
 export const SphinxDocumentModel: Model<InterfaceSphinxDocumentModel> = model<InterfaceSphinxDocumentModel>('sphinx_document', SphinxDocumentSchema)
