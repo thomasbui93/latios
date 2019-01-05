@@ -24,11 +24,13 @@ export const securedRoutes: InterfaceSecuredRoute[] = [
         type: RouteTypes.fragmentMatched,
         method: RequestMethods.ANY
     },
+    /**
     {
         path: '/api/sphinx',
         type: RouteTypes.fragmentMatched,
         method: RequestMethods.ANY
     },
+    */
     {
         path: '/auth/me',
         type: RouteTypes.exact,

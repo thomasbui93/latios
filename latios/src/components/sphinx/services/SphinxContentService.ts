@@ -7,7 +7,8 @@ import { RedisCacheService } from '../../../utils/cache/RedisCacheService'
 
 interface InterfaceQueryParam {
     $text?: {
-        $search: string
+        $search: string,
+        $language: string
     },
     createdAt?: {
         $gte?: Date,
@@ -24,8 +25,11 @@ export class SphinxContentService {
     public prepareSearchField(query: {[key: string]: string}) {
         const sort = {} as InterfaceSort
         if (query.sortBy) {
-            sort[query.sortBy] = query.sortType === 'ASD' ? EnumSort.ASC : EnumSort.ASC
+            sort[query.sortBy] = query.sortType === 'ASC' ? EnumSort.ASC : EnumSort.ASC
+        } else {
+            sort['createdAt'] = EnumSort.ASC
         }
+
         const pagination = {
             limit: query.limit ? parseInt(query.limit) : defaultPagination.limit,
             page: query.page ? parseInt(query.page) : defaultPagination.page
@@ -34,7 +38,8 @@ export class SphinxContentService {
 
         if (query.text) {
             queries.$text = {
-                $search : query.text
+                $search : query.text,
+                $language: 'en',
             }
         }
         try {
@@ -60,7 +65,6 @@ export class SphinxContentService {
 
     searchDocuments(query: {[key: string]: string}) {
         const {queries, sort, pagination} = this.prepareSearchField(query)
-
         return this.performanceSearch(queries, sort, pagination)
     }
 

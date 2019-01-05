@@ -22,11 +22,13 @@ const SphinxDocumentSchema: Schema = new Schema({
     question: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        text: true,
     },
     answer: {
         type: String,
         required: true,
+        text: true,
     },
     keywords: {
         type: [String],
