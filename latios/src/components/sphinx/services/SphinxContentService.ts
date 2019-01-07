@@ -13,7 +13,9 @@ interface InterfaceQueryParam {
     createdAt?: {
         $gte?: Date,
         $lte?: Date
-    }
+    },
+    level?: string,
+    keywords?: string[] | string
 }
 
 @injectable()
@@ -59,7 +61,13 @@ export class SphinxContentService {
         }
 
         return {
-            queries,
+            queries: {
+                queries,
+                ...{
+                    level: query.level,
+                    keywords: query.keywords
+                }
+            },
             sort,
             pagination
         }
@@ -81,7 +89,6 @@ export class SphinxContentService {
             if (cached) {
                 return JSON.parse(cached)
             }
-
             const documents = await this.getExecution(queries)
                 .limit(pagination.limit)
                 .skip(getSkip(pagination))
@@ -91,21 +98,53 @@ export class SphinxContentService {
 
             return documents
         } catch (error) {
+            console.log(error)
             throw Error(`Error while searching for documents, ${error.stack}`)
         }
     }
 
     public getExecution(queries: InterfaceQueryParam) {
-        if (queries.$text) {
+        const { $text, level, keywords, createdAt } = queries
+        const conditions = []
+        if (level) {
+            conditions.push({
+                level
+            })
+        }
+        if ($text) {
+            conditions.push({
+                $text
+            })
+        }
+        if (createdAt) {
+            conditions.push({
+                createdAt
+            })
+        }
+        if (keywords) {
+            const keywordsCondition = typeof keywords === 'string' ? keywords.split(',') : [...keywords]
+            conditions.push({
+                keywords: {
+                    $in: keywordsCondition
+                }
+            })
+        }
+        if (conditions.length === 0) {
+            return this.sphinxDocument.find({})
+        }
+        const query = {
+            $and: conditions
+        }
+        if ($text) {
             return this.sphinxDocument
-                .find(queries, {
+                .find(query, {
                     score: {
                         $meta: 'textScore'
                     }
                 })
         } else {
             return this.sphinxDocument
-                .find(queries)
+                .find(query)
         }
     }
 

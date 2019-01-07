@@ -20,11 +20,6 @@ export interface InterfaceSecuredRoute {
 
 export const securedRoutes: InterfaceSecuredRoute[] = [
     {
-        path: '/ping',
-        type: RouteTypes.fragmentMatched,
-        method: RequestMethods.ANY
-    },
-    {
         path: '/api/sphinx',
         type: RouteTypes.fragmentMatched,
         method: RequestMethods.ANY
