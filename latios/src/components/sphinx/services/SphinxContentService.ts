@@ -8,7 +8,7 @@ import { RedisCacheService } from '../../../utils/cache/RedisCacheService'
 interface InterfaceQueryParam {
     $text?: {
         $search: string,
-        $language: string
+        $language?: string
     },
     createdAt?: {
         $gte?: Date,
@@ -34,8 +34,7 @@ export class SphinxContentService {
 
         if (query.text) {
             queries.$text = {
-                $search: query.text,
-                $language: 'none',
+                $search: query.text
             }
         }
         const sort = {} as InterfaceSort
@@ -62,7 +61,7 @@ export class SphinxContentService {
 
         return {
             queries: {
-                queries,
+                ...queries,
                 ...{
                     level: query.level,
                     keywords: query.keywords
@@ -85,7 +84,7 @@ export class SphinxContentService {
                 sort,
                 pagination
             })
-            const cached = await this.getDataFromCache(cacheKey)
+            const cached = false // await this.getDataFromCache(cacheKey)
             if (cached) {
                 return JSON.parse(cached)
             }
@@ -94,9 +93,14 @@ export class SphinxContentService {
                 .skip(getSkip(pagination))
                 .sort(sort)
                 .exec()
-            await this.cacheService.put(this.cacheNameSpace, cacheKey, JSON.stringify(documents))
+            const meta = await this.getMetaSearchData(queries, pagination)
+            const data = {
+                documents,
+                meta
+            }
+            await this.cacheService.put(this.cacheNameSpace, cacheKey, JSON.stringify(data))
 
-            return documents
+            return data
         } catch (error) {
             console.log(error)
             throw Error(`Error while searching for documents, ${error.stack}`)
@@ -136,6 +140,7 @@ export class SphinxContentService {
             $and: conditions
         }
         if ($text) {
+            console.log(conditions)
             return this.sphinxDocument
                 .find(query, {
                     score: {
@@ -145,6 +150,15 @@ export class SphinxContentService {
         } else {
             return this.sphinxDocument
                 .find(query)
+        }
+    }
+
+    public async getMetaSearchData(queries: InterfaceQueryParam, pagination: InterfacePagination) {
+        const total = await this.getExecution(queries).countDocuments()
+
+        return {
+            total,
+            ...pagination
         }
     }
 

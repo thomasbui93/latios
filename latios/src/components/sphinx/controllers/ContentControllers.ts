@@ -16,10 +16,8 @@ export class ContentControllers {
     @httpGet('/')
     private async listAction(request: Request, response: Response) {
         try {
-            const documents = await this.sphinxContentService.searchDocuments(request.query)
-            response.json({
-                documents
-            })
+            const data = await this.sphinxContentService.searchDocuments(request.query)
+            return response.json(data)
         } catch ( exception ) {
             return response.json({
                 error: true,
