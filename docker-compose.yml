@@ -1,16 +1,6 @@
 version: '3.3'
 
 services:
-  nginx:
-    container_name: latios_nginx
-    image: nginx:latest
-    ports:
-      - 80:80
-      - 443:443
-    restart: always
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/ssl:/etc/nginx/ssl
   latios:
     container_name: latios
     build:
@@ -21,6 +11,8 @@ services:
     depends_on:
       - redis
       - database
+    ports:
+      - '8080:8080'
   redis:
     container_name: latios_redis
     image: bitnami/redis:latest
