@@ -1,7 +1,7 @@
 import { RedisClient } from 'redis'
 import { InterfaceCache } from './InterfaceCache'
 import { Redis } from '../../datasource'
-import { booleanReducer } from '../array/booleanReducer'
+import { booleanReducer } from '../array/boolean-reducer'
 
 export class RedisCacheService implements InterfaceCache {
     private redisClient: RedisClient = Redis.getInstance()

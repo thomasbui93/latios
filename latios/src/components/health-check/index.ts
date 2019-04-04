@@ -3,7 +3,7 @@ import { Mongo, Redis } from '../../datasource'
 
 export class HealthCheck extends GeneralComponent {
     public registerControllers() {
-        require('./controllers/ping')
+        require('./controllers/PingController')
     }
 
     public async verify(): Promise<boolean> {

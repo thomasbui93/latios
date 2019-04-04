@@ -1,6 +1,6 @@
 import { Express } from 'express'
 import { GeneralComponent } from '../../core/GeneralComponent'
-import { AuthMiddleware } from './middlewares/auth'
+import { AuthMiddleware } from './middlewares/AuthMiddleware'
 
 export class Auth extends GeneralComponent {
 
