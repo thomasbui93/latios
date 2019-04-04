@@ -84,7 +84,7 @@ export class SphinxContentService {
                 sort,
                 pagination
             })
-            const cached = false // await this.getDataFromCache(cacheKey)
+            const cached = await this.getDataFromCache(cacheKey)
             if (cached) {
                 return JSON.parse(cached)
             }
@@ -140,7 +140,6 @@ export class SphinxContentService {
             $and: conditions
         }
         if ($text) {
-            console.log(conditions)
             return this.sphinxDocument
                 .find(query, {
                     score: {
