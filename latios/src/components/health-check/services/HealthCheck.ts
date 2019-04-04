@@ -23,14 +23,18 @@ export class HealthCheck {
     ]
 
     async check(): Promise<HealthStatus> {
-        const healthStatuses: HealthStatus = {}
-        const serviceStatuses = this.services.map((service) => service.getStatus())
-        const statuses = await Promise.all(serviceStatuses)
+        try {
+            const healthStatuses: HealthStatus = {}
+            const serviceStatuses = this.services.map((service) => service.getStatus())
+            const statuses = await Promise.all(serviceStatuses)
 
-        this.serviceNames.forEach((serviceName, index) => {
-            healthStatuses[serviceName] = statuses[index] ? SystemStatuses['Operating'] : SystemStatuses['Crashing']
-        })
+            this.serviceNames.forEach((serviceName, index) => {
+                healthStatuses[serviceName] = statuses[index] ? SystemStatuses['Operating'] : SystemStatuses['Crashing']
+            })
 
-        return healthStatuses
+            return healthStatuses
+        } catch (err) {
+            return {}
+        }
     }
 }

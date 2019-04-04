@@ -3,8 +3,7 @@ import { createClient, RedisClient } from 'redis'
 export class Redis {
     private static client: RedisClient
 
-    private constructor() {
-    }
+    private constructor() {}
 
     public static getInstance(): RedisClient {
         if (typeof Redis.client === 'undefined') {
@@ -31,7 +30,11 @@ export class Redis {
     }
 
     public static async getStatus(): Promise<boolean> {
-        const status = await this.getInstance().ping()
-        return status
+        try {
+            const status = await this.getInstance().ping()
+            return status
+        } catch (err) {
+            return false
+        }
     }
 }
