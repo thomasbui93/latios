@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { controller, httpGet, httpPost } from 'inversify-express-utils'
+import { controller, httpPost } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { TYPES } from '../../../utils/ioc'
 import { AuthService } from '../services/AuthService'

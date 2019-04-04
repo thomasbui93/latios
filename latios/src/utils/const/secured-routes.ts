@@ -13,14 +13,14 @@ export enum RequestMethods {
 }
 
 export interface InterfaceSecuredRoute {
-    path: string | RegExp,
+    path: string,
     type: RouteTypes,
     method: (string| RequestMethods) | (string| RequestMethods)[]
 }
 
 export const securedRoutes: InterfaceSecuredRoute[] = [
     {
-        path: '/ping',
+        path: '/api/sphinx',
         type: RouteTypes.fragmentMatched,
         method: RequestMethods.ANY
     },
@@ -52,7 +52,7 @@ export function isSecuredRoute(url: string, route: InterfaceSecuredRoute): boole
         case RouteTypes.exact:
             return url === route.path
         case RouteTypes.fragmentMatched:
-            return url === route.path // @TODO: implement fragment matched
+            return url.indexOf(route.path) > -1
         case RouteTypes.regex:
             return new RegExp(route.path).test(url)
     }
