@@ -3,8 +3,7 @@ import { connect, Mongoose, connection } from 'mongoose'
 export class Mongo {
     private static client: Promise<Mongoose>
 
-    private constructor() {
-    }
+    private constructor() {}
 
     public static getInstance(): Promise<Mongoose> {
         if (typeof Mongo.client === 'undefined') {
