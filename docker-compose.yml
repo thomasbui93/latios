@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2.1'
 
 services:
   latios:
@@ -9,19 +9,34 @@ services:
       - ./latios:/usr/src
       - /usr/src/node_modules
     depends_on:
-      - redis
-      - database
+      redis
+      database
     ports:
       - '8080:8080'
+    depends_on:
+      redis:
+        condition: service_healthy
+      database:
+        condition: service_healthy
   redis:
     container_name: latios_redis
     image: bitnami/redis:latest
     ports:
       - '6379:6379'
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   database:
     container_name: latios_database
     image: bitnami/mongodb:latest
     restart: always
     ports:
       - '27017:27017'
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 5

@@ -205,7 +205,7 @@ export class SphinxContentService {
 
     async removeDocument(documentId: string): Promise<boolean> {
         try {
-            const document = await SphinxDocumentModel.findByIdAndRemove(documentId)
+            await SphinxDocumentModel.findByIdAndRemove(documentId)
             await this.cacheService.remove(this.cacheNameSpace, documentId)
 
             return true

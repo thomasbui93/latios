@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2.1'
 
 services:
   latios:
@@ -7,7 +7,7 @@ services:
       context: ./latios
       dockerfile: Dockerfile-dev
     env_file:
-      - ./docker/.env.dist
+      ./docker/.env.dist
   redis:
     environment: 
       REDIS_PASSWORD: core
