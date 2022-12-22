@@ -23,7 +23,7 @@
     "inversify": "^4.13.0",
     "inversify-binding-decorators": "^4.0.0",
     "inversify-express-utils": "^6.3.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.1.6",
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13"
